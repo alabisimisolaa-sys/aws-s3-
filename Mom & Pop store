@@ -1,0 +1,20 @@
+# Provision the bucket
+aws s3 mb s3://cafe-simi-challenge2026 --region us-west-2
+
+# Generate static web asset safely bypassing shell history expansions
+echo 'Welcome to the Mom & Pop Cafe storage challenge!' > index.html
+
+# Copy the file to the S3 bucket root
+aws s3 cp index.html s3://cafe-simi-challenge2026/index.html
+
+
+aws s3api put-public-access-block \
+  --bucket cafe-simi-challenge2026 \
+  --public-access-block-configuration "BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false"
+
+
+# Grant granular read access to the target file
+aws s3api put-object-acl --bucket cafe-simi-challenge2026 --key index.html --acl public-read
+
+# Verify file presence and exact size specifications via CLI
+aws s3 ls s3://cafe-simi-challenge2026 --human-readable
